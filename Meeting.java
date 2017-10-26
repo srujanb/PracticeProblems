@@ -1,4 +1,4 @@
-public class Meeting {
+public class Meeting implements Comparable<Meeting> {
 
 
     private int startTime;
@@ -8,6 +8,8 @@ public class Meeting {
         this.startTime = startTime;
         this.endTime   = endTime;
     }
+
+
 
     public int getStartTime() {
         return startTime;
@@ -25,4 +27,8 @@ public class Meeting {
         this.endTime = endTime;
     }
 
+    @Override
+    public int compareTo(Meeting that) {
+        return this.getStartTime() - that.getStartTime();
+    }
 }
