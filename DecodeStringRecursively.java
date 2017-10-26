@@ -18,11 +18,16 @@
 //Output : bcacabcacabcaca
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DecodeStringRecursively {
+
+    static Boolean shown = false;
 
     public static void main(String args[]){
 
-        String encodedString = "3[b2[ca]]";
+        String encodedString = "3[a3[b]]1[ab]";
 
         String decodedString = decodeString(encodedString);
 
@@ -36,24 +41,55 @@ public class DecodeStringRecursively {
             return "";
 
         char firstChar = encodedString.charAt(0);
-        String restOfTheString = encodedString.substring(1,encodedString.length());
         String returnValue = "";
-        int times = 1;
 
-        if ((String.valueOf(firstChar)).equals("[")){
-            getStringContent(restOfTheString);
-            returnValue = decodeString(restOfTheString);
 
-        }else if( Character.getNumericValue(firstChar) < 10){
-            times = Character.getNumericValue(firstChar);
-            returnValue = decodeString(restOfTheString);
+        List<String> list = new ArrayList<>();
+        if (String.valueOf(firstChar).equals("[")){
+            int bracesLevel = 0;
+            String sub = encodedString.substring(1,encodedString.length());
+//            System.out.println("creating sub: " + sub);
+            String element = "";
+            for (char c: sub.toCharArray()){
+                if (String.valueOf(c).equals("["))
+                    bracesLevel++;
+                else if (String.valueOf(c).equals("]"))
+                    bracesLevel--;
+                element += c;
+
+                if (String.valueOf(c).equals("]") && bracesLevel == 0){
+                    list.add(element);
+                    element = "";
+                }
+            }
         }else{
-            returnValue = decodeString(restOfTheString);
+            list.add(encodedString);
         }
 
-        String temp = returnValue;
-        for (int i = 1; i < times; i++)
-            returnValue += temp;
+        //Loop for all elements
+
+        for (String string : list) {
+
+            encodedString = string;
+
+            String restOfTheString = encodedString.substring(1, encodedString.length());
+            int times = 1;
+
+            if ((String.valueOf(firstChar)).equals("[")) {
+                getStringContent(restOfTheString);
+                returnValue = decodeString(restOfTheString);
+
+            } else if (Character.getNumericValue(firstChar) < 10) {
+                times = Character.getNumericValue(firstChar);
+                returnValue = decodeString(restOfTheString);
+            } else {
+                returnValue = decodeString(restOfTheString);
+            }
+
+            String temp = returnValue;
+            for (int i = 1; i < times; i++)
+                returnValue += temp;
+        }
 
         if (String.valueOf(firstChar).equals("[") || Character.getNumericValue(firstChar) < 10)
             return returnValue;
