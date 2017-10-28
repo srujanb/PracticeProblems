@@ -1,51 +1,63 @@
+import java.util.Arrays;
+
 public class DecodeWays {
 
     public static void main(String args[]){
 
-        String encodedString = "0711189";
+        String encodedString = "711109";
 
-        int previousNumber = Character.getNumericValue(encodedString.charAt(0));
+        System.out.println("Combinations = " + numDecodings(encodedString));
 
-        int previousToPreviousCombinations = 1;
-
-        int previousCombinations = 1;
-
-        int currentCombinations = 1;
-
-        for (int index = 1; index < encodedString.length(); index++){
-
-            char c = encodedString.charAt(index);
-            int currentNumber = Character.getNumericValue(c);
-
-            Boolean canCombine = canCombine(previousNumber,currentNumber);
-
-            if ((index == 1 && previousNumber == 0) ||(currentNumber == 0 && !canCombine)){
-                currentCombinations = 0;
-                break;
-            }
-
-            currentCombinations = previousCombinations;
-
-            if (canCombine)
-                currentCombinations += previousToPreviousCombinations;
-
-            previousToPreviousCombinations = previousCombinations;
-            previousCombinations = currentCombinations;
-            previousNumber = currentNumber;
-
-        }
-
-        System.out.println("Total combinations = " + currentCombinations);
 
     }
 
-    private static Boolean canCombine(int previousNumber, int current) {
+    public static int numDecodings(String s) {
 
-        if (previousNumber + current == 0)
-            return false;
+        String encodedString = s;
 
-        return (previousNumber * 10 + current) < 27;
+        if (encodedString == null)
+            return 0;
 
+        int[] combinationsTillHere = new int[encodedString.length()];
+        Arrays.fill(combinationsTillHere,0);
+        if (Character.getNumericValue(encodedString.charAt(0)) == 0)
+            combinationsTillHere[0] = 0;
+        else
+            combinationsTillHere[0] = 1;
+
+        for (int index = 1; index < encodedString.length(); index++){
+
+            int previousNumber = Character.getNumericValue(encodedString.charAt(index-1));
+            int currentNumber = Character.getNumericValue(encodedString.charAt(index));
+            //without combining
+            combinationsTillHere[index] += getIndependentCombinations(currentNumber)*combinationsTillHere[index-1];
+
+            //With Combination
+            try{
+                combinationsTillHere[index] += getCombinationsWithPrevious(previousNumber,currentNumber)*combinationsTillHere[index-2];
+            }catch(ArrayIndexOutOfBoundsException e){
+                combinationsTillHere[index] += getCombinationsWithPrevious(previousNumber,currentNumber)*1;
+            }
+        }
+
+        return combinationsTillHere[encodedString.length() - 1];
+
+    }
+
+    public static int getIndependentCombinations(int currentNumber){
+
+        if  (currentNumber == 0)
+            return 0;
+        else
+            return 1;
+    }
+
+    public static int getCombinationsWithPrevious(int previousNumber,int currentNumber){
+        if (previousNumber == 0)
+            return 0;
+        if (previousNumber*10 + currentNumber < 27)
+            return 1;
+        return 0;
     }
 
 }
