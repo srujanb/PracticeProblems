@@ -36,7 +36,7 @@ public class DecodeWays {
             try{
                 combinationsTillHere[index] += getCombinationsWithPrevious(previousNumber,currentNumber)*combinationsTillHere[index-2];
             }catch(ArrayIndexOutOfBoundsException e){
-                combinationsTillHere[index] += getCombinationsWithPrevious(previousNumber,currentNumber)*1;
+                combinationsTillHere[index] += getCombinationsWithPrevious(previousNumber,currentNumber); //Omitted (*1) which is more readable
             }
         }
 
